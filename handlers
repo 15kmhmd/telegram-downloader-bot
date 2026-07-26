@@ -67,48 +67,62 @@ async def start(message: Message):
     )
 download.py
 from aiogram import Router
-from aiogram.types import Message
+from aiogram.types import Message, FSInputFile
 from services.downloader import download_video
 import os
 
 router = Router()
 
+SUPPORTED = (
+    "tiktok.com",
+    "vm.tiktok.com",
+    "instagram.com",
+    "facebook.com",
+    "fb.watch",
+    "youtube.com",
+    "youtu.be",
+    "x.com",
+    "twitter.com",
+)
 
 @router.message()
 async def download_handler(message: Message):
 
-    text = message.text
-
-    if not text:
+    if not message.text:
         return
 
-    if not text.startswith("http"):
+    url = message.text.strip()
+
+    if not any(site in url for site in SUPPORTED):
         return
 
-    wait = await message.answer(
-        "🔎 يبحث لك <b>أبو جنات</b> عن الفيديو...\n"
-        "⏳ يرجى الانتظار قليلاً."
+    status = await message.answer(
+        "🔎 <b>يبحث لك أبو جنات عن الفيديو...</b>\n\n"
+        "⏳ الرجاء الانتظار."
     )
 
     try:
-        video = download_video(text)
+        file_path = download_video(url)
 
-        await wait.edit_text(
-            "✅ عثر لك <b>أبو جنات</b> على الفيديو.\n"
+        await status.edit_text(
+            "✅ <b>عثر لك أبو جنات على الفيديو.</b>\n"
             "📤 جاري الإرسال..."
         )
 
+        video = FSInputFile(file_path)
+
         await message.answer_video(
-            video=open(video, "rb"),
+            video,
             caption="👨‍💻 Developed by Abu Janat"
         )
 
-        os.remove(video)
+        os.remove(file_path)
 
     except Exception:
-        await wait.edit_text(
+
+        await status.edit_text(
             "❌ تعذر تحميل الفيديو.\n\n"
-            "تأكد أن الرابط صحيح ومدعوم."
+            "يرجى التأكد من أن الرابط صحيح."
         )
 admin.py
 
