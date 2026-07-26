@@ -1,3 +1,55 @@
+start.py
+from aiogram import Router
+from aiogram.filters import CommandStart
+from aiogram.types import Message
+
+from config import BOT_NAME
+from keyboards.main import main_menu
+from services.database import add_user
+
+router = Router()
+
+
+@router.message(CommandStart())
+async def start(message: Message):
+
+    # حفظ المستخدم في قاعدة البيانات
+    await add_user(message.from_user)
+
+    text = f"""
+👋 <b>مرحباً بك في {BOT_NAME}</b>
+
+━━━━━━━━━━━━━━━━━━━━
+
+📥 أرسل أي رابط فيديو من:
+
+• TikTok
+• Instagram
+• Facebook
+• YouTube
+• X (Twitter)
+
+⚡ سأقوم بالعثور على الفيديو وتحميله بأفضل جودة ممكنة.
+
+━━━━━━━━━━━━━━━━━━━━
+
+🎬 <b>مميزات البوت:</b>
+
+✅ تحميل الفيديو
+✅ استخراج MP3
+✅ أعلى جودة متاحة
+✅ سرعة عالية
+✅ دعم أغلب المنصات
+
+━━━━━━━━━━━━━━━━━━━━
+
+👨‍💻 <b>Developed by Abu Janat</b>
+"""
+
+    await message.answer(
+        text,
+        reply_markup=main_menu()
+    )
 __init__.py
 from .start import router as start_router
 from .download import router as download_router
