@@ -1,7 +1,9 @@
-
 import os
+from dotenv import load_dotenv
 
-BOT_TOKEN = os.getenv("7724138715:AAFoH44K9BF5NFqNzPiwZdc67RGvTZPUvSA")
+load_dotenv()
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 OWNER_ID = 900438535
 
