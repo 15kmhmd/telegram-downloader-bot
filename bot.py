@@ -3,10 +3,7 @@ import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
-
-from config import BOT_TOKEN
-from handlers import start_router, download_router, admin_router
+from aiogram.enums import ParseMo
 
 logging.basicConfig(level=logging.INFO)
 
