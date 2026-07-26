@@ -28,4 +28,50 @@ def download_video(url: str):
 
         return path
 database.py
+import aiosqlite
+
+DB_NAME = "bot.db"
+
+
+async def create_db():
+    async with aiosqlite.connect(DB_NAME) as db:
+        await db.execute("""
+        CREATE TABLE IF NOT EXISTS users(
+            user_id INTEGER PRIMARY KEY,
+            username TEXT,
+            first_name TEXT,
+            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+
+        await db.commit()
+
+
+async def add_user(user):
+    async with aiosqlite.connect(DB_NAME) as db:
+        await db.execute(
+            """
+            INSERT OR IGNORE INTO users
+            (user_id, username, first_name)
+            VALUES (?, ?, ?)
+            """,
+            (
+                user.id,
+                user.username,
+                user.first_name
+            )
+        )
+
+        await db.commit()
+
+
+async def get_users_count():
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute(
+            "SELECT COUNT(*) FROM users"
+        )
+
+        count = await cursor.fetchone()
+
+        return count[0]
 anti_spam.py
