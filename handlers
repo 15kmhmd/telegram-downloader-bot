@@ -127,5 +127,37 @@ async def download_handler(message: Message):
 admin.py
 
 from aiogram import Router
+from aiogram.filters import Command
+from aiogram.types import Message
+
+from config import OWNER_ID
+from services.database import get_users_count
 
 router = Router()
+
+
+@router.message(Command("panel"))
+async def panel(message: Message):
+
+    if message.from_user.id != OWNER_ID:
+        return
+
+    users = await get_users_count()
+
+    await message.answer(
+        f"""
+👑 <b>لوحة تحكم أبو جنات</b>
+
+👥 عدد المستخدمين: {users}
+
+━━━━━━━━━━━━━━
+
+📊 /stats
+📢 /broadcast
+🚫 /ban
+✅ /unban
+
+━━━━━━━━━━━━━━
+👨‍💻 Developed by Abu Janat
+"""
+    )
