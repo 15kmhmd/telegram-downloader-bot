@@ -1,1 +1,50 @@
 main.py
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+
+def main_menu():
+
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+
+            [
+                InlineKeyboardButton(
+                    text="📥 تحميل فيديو",
+                    callback_data="download"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="🎵 استخراج MP3",
+                    callback_data="mp3"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="📊 معلومات الفيديو",
+                    callback_data="info"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="📜 سجل التحميلات",
+                    callback_data="history"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="👨‍💻 المطور",
+                    url="https://t.me/M59_3"
+                ),
+
+                InlineKeyboardButton(
+                    text="⭐ تحديثات البوت",
+                    url="https://t.me/YourChannel"
+                )
+            ]
+        ]
+    )
