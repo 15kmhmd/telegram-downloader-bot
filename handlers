@@ -66,6 +66,50 @@ async def start(message: Message):
         reply_markup=keyboard
     )
 download.py
+from aiogram import Router
+from aiogram.types import Message
+from services.downloader import download_video
+import os
+
+router = Router()
+
+
+@router.message()
+async def download_handler(message: Message):
+
+    text = message.text
+
+    if not text:
+        return
+
+    if not text.startswith("http"):
+        return
+
+    wait = await message.answer(
+        "🔎 يبحث لك <b>أبو جنات</b> عن الفيديو...\n"
+        "⏳ يرجى الانتظار قليلاً."
+    )
+
+    try:
+        video = download_video(text)
+
+        await wait.edit_text(
+            "✅ عثر لك <b>أبو جنات</b> على الفيديو.\n"
+            "📤 جاري الإرسال..."
+        )
+
+        await message.answer_video(
+            video=open(video, "rb"),
+            caption="👨‍💻 Developed by Abu Janat"
+        )
+
+        os.remove(video)
+
+    except Exception:
+        await wait.edit_text(
+            "❌ تعذر تحميل الفيديو.\n\n"
+            "تأكد أن الرابط صحيح ومدعوم."
+        )
 admin.py
 
 from aiogram import Router
