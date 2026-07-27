@@ -1,3 +1,4 @@
+__init__.py
 start.py
 from aiogram import Router
 from aiogram.filters import CommandStart
