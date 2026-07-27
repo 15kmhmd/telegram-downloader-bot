@@ -1,216 +1,38 @@
 __init__.py
+
+
+
 start.py
 from aiogram import Router
-from aiogram.filters import CommandStart
 from aiogram.types import Message
 
-from config import BOT_NAME
-from keyboards.main import main_menu
-from services.database import add_user
-
 router = Router()
 
-
-@router.message(CommandStart())
-async def start(message: Message):
-
-    # حفظ المستخدم في قاعدة البيانات
-    await add_user(message.from_user)
-
-    text = f"""
-👋 <b>مرحباً بك في {BOT_NAME}</b>
-
-━━━━━━━━━━━━━━━━━━━━
-
-📥 أرسل أي رابط فيديو من:
-
-• TikTok
-• Instagram
-• Facebook
-• YouTube
-• X (Twitter)
-
-⚡ سأقوم بالعثور على الفيديو وتحميله بأفضل جودة ممكنة.
-
-━━━━━━━━━━━━━━━━━━━━
-
-🎬 <b>مميزات البوت:</b>
-
-✅ تحميل الفيديو
-✅ استخراج MP3
-✅ أعلى جودة متاحة
-✅ سرعة عالية
-✅ دعم أغلب المنصات
-
-━━━━━━━━━━━━━━━━━━━━
-
-👨‍💻 <b>Developed by Abu Janat</b>
-"""
-
-    await message.answer(
-        text,
-        reply_markup=main_menu()
-    )
-__init__.py
-from .start import router as start_router
-from .download import router as download_router
-from .admin import router as admin_router
-start.py
-from aiogram import Router
-from aiogram.filters import CommandStart
-from aiogram.types import (
-    Message,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton
-)
-
-from config import BOT_NAME, DEVELOPER_URL, CHANNEL_URL
-
-router = Router()
+@router.message()
+async def start_handler(message: Message):
+    if message.text == "/start":
+        await message.answer(
+            "👋 أهلاً بك في بوت أبو جنات\n\n"
+            "أرسل رابط الفيديو وسأقوم بتحميله لك."
+        )
 
 
-@router.message(CommandStart())
-async def start(message: Message):
 
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="📥 تحميل فيديو",
-                    callback_data="download"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="🎵 استخراج MP3",
-                    callback_data="mp3"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="👨‍💻 المطور",
-                    url=DEVELOPER_URL
-                ),
-                InlineKeyboardButton(
-                    text="📢 القناة",
-                    url=CHANNEL_URL
-                )
-            ]
-        ]
-    )
 
-    await message.answer(
-        f"""
-<b>👋 أهلاً بك في {BOT_NAME}</b>
-
-🎬 أرسل أي رابط فيديو من:
-
-• TikTok
-• Instagram
-• Facebook
-• YouTube
-• X (Twitter)
-
-⚡ وسيقوم <b>أبو جنات</b> بالعثور على الفيديو وإرساله بأفضل جودة.
-
-━━━━━━━━━━━━━━━━━━
-👨‍💻 <b>Developed by Abu Janat</b>
-""",
-        reply_markup=keyboard
-    )
 download.py
 from aiogram import Router
-from aiogram.types import Message, FSInputFile
-from services.downloader import download_video
-import os
+from aiogram.types import Message
 
 router = Router()
-
-SUPPORTED = (
-    "tiktok.com",
-    "vm.tiktok.com",
-    "instagram.com",
-    "facebook.com",
-    "fb.watch",
-    "youtube.com",
-    "youtu.be",
-    "x.com",
-    "twitter.com",
-)
 
 @router.message()
 async def download_handler(message: Message):
-
-    if not message.text:
-        return
-
-    url = message.text.strip()
-
-    if not any(site in url for site in SUPPORTED):
-        return
-
-    status = await message.answer(
-        "🔎 <b>يبحث لك أبو جنات عن الفيديو...</b>\n\n"
-        "⏳ الرجاء الانتظار."
+    await message.answer(
+        "🔎 عثر لك أبو جنات على الفيديو، جاري التحميل..."
     )
 
-    try:
-        file_path = download_video(url)
 
-        await status.edit_text(
-            "✅ <b>عثر لك أبو جنات على الفيديو.</b>\n"
-            "📤 جاري الإرسال..."
-        )
-
-        video = FSInputFile(file_path)
-
-        await message.answer_video(
-            video,
-            caption="👨‍💻 Developed by Abu Janat"
-        )
-
-        os.remove(file_path)
-
-    except Exception:
-
-        await status.edit_text(
-            "❌ تعذر تحميل الفيديو.\n\n"
-            "يرجى التأكد من أن الرابط صحيح."
-        )
 admin.py
-
 from aiogram import Router
-from aiogram.filters import Command
-from aiogram.types import Message
-
-from config import OWNER_ID
-from services.database import get_users_count
 
 router = Router()
-
-
-@router.message(Command("panel"))
-async def panel(message: Message):
-
-    if message.from_user.id != OWNER_ID:
-        return
-
-    users = await get_users_count()
-
-    await message.answer(
-        f"""
-👑 <b>لوحة تحكم أبو جنات</b>
-
-👥 عدد المستخدمين: {users}
-
-━━━━━━━━━━━━━━
-
-📊 /stats
-📢 /broadcast
-🚫 /ban
-✅ /unban
-
-━━━━━━━━━━━━━━
-👨‍💻 Developed by Abu Janat
-"""
-    )
