@@ -1,4 +1,10 @@
 print("ABU JANAT VERSION 2")
+import sys
+import os
+
+# إصلاح مسار النظام للتعرف على مجلد handlers على الاستضافة
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 import asyncio
 import logging
 
@@ -35,5 +41,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
