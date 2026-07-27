@@ -1,4 +1,4 @@
-print("ABU JANAT VERSION 2")
+
 import sys
 import os
 
