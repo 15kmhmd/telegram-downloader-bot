@@ -1,3 +1,4 @@
+print("ABU JANAT VERSION 2")
 import asyncio
 import logging
 
